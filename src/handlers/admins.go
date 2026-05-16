@@ -34,14 +34,16 @@ func reloadAdminCacheHandler(c *gotdbot.Client, ctx *gotdbot.Context) error {
 		timePassed := time.Since(lastUsed)
 		if timePassed < reloadCooldown {
 			remaining := int((reloadCooldown - timePassed).Seconds())
-			_, _ = m.ReplyText(c, fmt.Sprintf("Please wait %s before using this command again.", utils.SecToMin(remaining)), nil)
+			// Gözləmə müddəti mesajı
+			_, _ = m.ReplyText(c, fmt.Sprintf("⏳ <b>Gözləyin:</b> Bu əmrdən yenidən istifadə etmək üçün lütfən <code>%s</code> gözləyin.", utils.SecToMin(remaining)), nil)
 			return nil
 		}
 	}
 
 	reloadRateLimit.Set(reloadKey, time.Now())
 
-	reply, err := m.ReplyText(c, "Reloading administrator cache...", nil)
+	// Yenilənmə başlayanda çıxan mesaj
+	reply, err := m.ReplyText(c, "🔄 <i>Administrator keşi yenilənir, lütfən gözləyin...</i>", nil)
 	if err != nil {
 		c.Logger.Warn("Failed to send reloading message for chat", "chat_id", m.ChatId, "error", err)
 		return gotdbot.EndGroups
@@ -53,12 +55,14 @@ func reloadAdminCacheHandler(c *gotdbot.Client, ctx *gotdbot.Context) error {
 	admins, err := cache.GetAdmins(c, m.ChatId, true)
 	if err != nil {
 		c.Logger.Warn("Failed to reload the admin cache for chat", "chat_id", m.ChatId, "error", err)
-		_, _ = reply.EditText(c, "Failed to reload administrator cache.", nil)
+		// Xəta baş verərsə mesaj dəyişir
+		_, _ = reply.EditText(c, "💥 <b>Xəta:</b> Administrator keşini yeniləmək mümkün olmadı.", nil)
 		return gotdbot.EndGroups
 	}
 
 	c.Logger.Info("Reloaded admins for chat", "count", len(admins), "chat_id", m.ChatId)
-	_, _ = reply.EditText(c, "Administrator cache reloaded successfully.", nil)
+	// Uğurla başa çatanda mesaj dəyişir
+	_, _ = reply.EditText(c, "✅ <b>Uğurlu:</b> Administrator keşi uğurla yeniləndi! ⚡", nil)
 	return gotdbot.EndGroups
 }
 
@@ -67,7 +71,20 @@ func privacyHandler(c *gotdbot.Client, ctx *gotdbot.Context) error {
 	m := ctx.EffectiveMessage
 	botName := c.Me.FirstName
 
-	text := fmt.Sprintf("<b>Privacy Policy for %s</b>\n\n<b>1. Data Storage:</b>\nWe do not store personal data on your device. We do not track your browsing activity.\n\n<b>2. Collection:</b>\nWe only collect your Telegram <b>User ID</b> and <b>Chat ID</b> to provide music services. No names, phone numbers, or locations are stored.\n\n<b>3. Usage:</b>\nData is used strictly for bot functionality. No marketing or commercial use.\n\n<b>4. Sharing:</b>\nWe do not share data with third parties. No data is sold or traded.\n\n<b>5. Security:</b>\nWe use standard encryption to protect data. However, no online service is 100%% secure.\n\n<b>6. Cookies:</b>\n%s does not use cookies or tracking technologies.\n\n<b>7. Third Parties:</b>\nWe do not integrate with third-party data collectors, other than Telegram itself.\n\n<b>8. Your Rights:</b>\nYou can request data deletion or block the bot to revoke access.\n\n<b>9. Updates:</b>\nPolicy changes will be announced in the bot.\n\n<b>10. Contact:</b>\nQuestions? Contact our <a href=\"https://t.me/GuardxSupport\">Support Group</a>.\n\n──────────────────\n<b>Note:</b> This policy ensures a safe and respectful experience with %s.", botName, botName, botName)
+	// Məxfilik siyasəti mətni (Gözəl dizayn edilmiş forması)
+	text := fmt.Sprintf("🛡 <b>%s üçün Məxfilik Siyasəti</b>\n\n"+
+		"📋 <b>1. Data Saxlanılması:</b>\nCihazınızda heç bir şəxsi məlumat saxlanılmır. Sizin axtarış və ya qrup fəaliyyətiniz izlənilmir.\n\n"+
+		"🔍 <b>2. Məlumatların Toplanması:</b>\nBiz yalnız musiqi xidmətlərini təmin etmək üçün sizin Telegram <code>User ID</code> və <code>Chat ID</code> məlumatlarınızı oxuyuruq. Ad, soyad, telefon nömrəsi və ya məkan qeydə alınmır.\n\n"+
+		"⚙️ <b>3. İstifadə:</b>\nToplanan məlumatlar sırf botun funksiyalarının düzgün işləməsi üçündür. Reklam və ya kommersiya məqsədilə istifadə edilə bilməz.\n\n"+
+		"🤝 <b>4. Paylaşım:</b>\nMəlumatlarınız üçüncü şəxslərlə paylaşılmır, satılmır və ya ötürülmür.\n\n"+
+		"🔒 <b>5. Təhlükəsizlik:</b>\nMəlumatları qorumaq üçün standart şifrələmədən istifadə olunur. Lakin unutmayın ki, internetdə heç bir servis 100%% təhlükəsiz deyil.\n\n"+
+		"🍪 <b>6. Kukilər (Cookies):</b>\n%s kukilərdən və ya digər izləmə texnologiyalarından istifadə etmir.\n\n"+
+		"🌐 <b>7. Üçüncü Tərəflər:</b>\nTelegram-ın özü istisna olmaqla, heç bir kənar məlumat toplayıcı sistemlə inteqrasiyamız yoxdur.\n\n"+
+		"💡 <b>8. Sizin Hüquqlarınız:</b>\nİstədiyiniz vaxt botu bloklayaraq giriş icrasını ləğv edə və ya məlumatların silinməsini tələb edə bilərsiniz.\n\n"+
+		"📢 <b>9. Yenilənmələr:</b>\nSiyasətdə hər hansı bir dəyişiklik olarsa, bot vasitəsilə elan ediləcək.\n\n"+
+		"💬 <b>10. Əlaqə:</b>\nSualınız var? Bizim <a href=\"https://t.me/GuardxSupport\">Dəstək Qrupumuza</a> müraciət edin.\n\n"+
+		"──────────────────\n"+
+		"⚠️ <i><b>Qeyd:</b> Bu siyasət %s ilə təhlükəsiz və hörmətli bir təcrübə yaşamağınızı təmin edir.</i>", botName, botName, botName)
 
 	_, err := m.ReplyText(c, text, &gotdbot.SendTextMessageOpts{ParseMode: "html", DisableWebPagePreview: true})
 	return err
