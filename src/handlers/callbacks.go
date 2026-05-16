@@ -41,16 +41,16 @@ func playCallbackHandler(c *td.Client, ctx *td.Context) error {
 	}
 
 	if !cache.ChatCache.IsActive(chatID) {
-		text := "There is no active playback."
-		_ = cb.Answer(c, 0, false, text, "")
+		text := "❌ <b>ʜᴀʟ-ʜᴀᴢıʀᴅᴀ ᴀᴋᴛɪᴠ ᴍᴀʜɴı ʏᴏxᴅᴜʀ...</b>"
+		_ = cb.Answer(c, 0, false, "❌ ʜᴀʟ-ʜᴀᴢıʀᴅᴀ ᴀᴋᴛɪᴠ ᴍᴀʜɴı ʏᴏxᴅᴜʀ...", "")
 		_, _ = cb.EditMessageText(c, text, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons(""), ParseMode: "HTML", DisableWebPagePreview: true})
 		return nil
 	}
 
 	currentTrack := cache.ChatCache.GetPlayingTrack(chatID)
 	if currentTrack == nil {
-		_ = cb.Answer(c, 0, false, "There is no active playback.", "")
-		_, _ = cb.EditMessageText(c, "There is no active playback.", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons(""), ParseMode: "HTML", DisableWebPagePreview: true})
+		_ = cb.Answer(c, 0, false, "❌ ʜᴀʟ-ʜᴀᴢıʀᴅᴀ ᴀᴋᴛɪᴠ ᴍᴀʜɴı ʏᴏxᴅᴜʀ...", "")
+		_, _ = cb.EditMessageText(c, "❌ <b>ʜᴀʟ-ʜᴀᴢıʀᴅᴀ ᴀᴋᴛɪᴠ ᴍᴀʜɴı ʏᴏxᴅᴜʀ...</b>", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons(""), ParseMode: "HTML", DisableWebPagePreview: true})
 		return nil
 	}
 
@@ -58,7 +58,7 @@ func playCallbackHandler(c *td.Client, ctx *td.Context) error {
 		escURL := html.EscapeString(currentTrack.URL)
 		escName := html.EscapeString(currentTrack.Name)
 		escUser := html.EscapeString(currentTrack.User)
-		return fmt.Sprintf("%s <b>%s</b>\n\n<b>Track:</b> <a href='%s'>%s</a>\n<b>Duration:</b> %s\n<b>Requested by:</b> %s",
+		return fmt.Sprintf("%s <b>%s</b>\n\n<b>🎵 ᴍᴀʜɴı:</b> <a href='%s'>%s</a>\n<b>⏱ ᴅəᴠᴀᴍıʏʏəᴛ:</b> %s\n<b>👤 İstəyəɴ:</b> %s",
 			emoji, status,
 			escURL, escName,
 			utils.SecToMin(currentTrack.Duration),
@@ -69,82 +69,82 @@ func playCallbackHandler(c *td.Client, ctx *td.Context) error {
 	switch {
 	case strings.Contains(data, "play_skip"):
 		if err := vc.Calls.PlayNext(chatID); err != nil {
-			_ = cb.Answer(c, 0, false, "Unable to skip the current track.", "")
-			_, _ = cb.EditMessageText(c, "Unable to skip the current track.", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons(""), ParseMode: "HTML", DisableWebPagePreview: true})
+			_ = cb.Answer(c, 0, false, "⚠️ ɴöᴠʙəᴛɪ ᴍᴀʜɴıʏᴀ ᴋᴇçᴍəᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.", "")
+			_, _ = cb.EditMessageText(c, "⚠️ <b>ɴöᴠʙəᴛɪ ᴍᴀʜɴıʏᴀ ᴋᴇçᴍəᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.</b>", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons(""), ParseMode: "HTML", DisableWebPagePreview: true})
 			return nil
 		}
-		_ = cb.Answer(c, 0, false, "Track skipped.", "")
+		_ = cb.Answer(c, 0, false, "⏭ ɴöᴠʙəᴛɪ ᴍᴀʜɴıʏᴀ ᴋᴇçɪʟᴅɪ.", "")
 		_ = c.DeleteMessages(chatID, []int64{cb.MessageId}, &td.DeleteMessagesOpts{Revoke: true})
 		return nil
 
 	case strings.Contains(data, "play_stop"):
 		if err := vc.Calls.Stop(chatID); err != nil {
-			_ = cb.Answer(c, 0, false, "Unable to stop playback.", "")
-			_, _ = cb.EditMessageText(c, "Unable to stop playback.", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons(""), ParseMode: "HTML", DisableWebPagePreview: true})
+			_ = cb.Answer(c, 0, false, "⚠️ ᴍᴀʜɴıɴı ᴅᴀʏᴀɴᴅıʀᴍᴀᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.", "")
+			_, _ = cb.EditMessageText(c, "⚠️ <b>ᴍᴀʜɴıɴı ᴅᴀʏᴀɴᴅıʀᴍᴀᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.</b>", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons(""), ParseMode: "HTML", DisableWebPagePreview: true})
 			return nil
 		}
 
-		msg := fmt.Sprintf("<b>Playback stopped.</b>\nRequested by: %s", html.EscapeString(user.FirstName))
-		_ = cb.Answer(c, 0, false, "Playback stopped.", "")
+		msg := fmt.Sprintf("🛑 <b>ᴍᴀʜɴı ᴅᴀʏᴀɴᴅıʀıʟᴅı.</b>\n👤 ᴅᴀʏᴀɴᴅıʀᴀɴ: %s", html.EscapeString(user.FirstName))
+		_ = cb.Answer(c, 0, false, "🛑 ᴍᴀʜɴı ᴅᴀʏᴀɴᴅıʀıʟᴅı.", "")
 		_, err := cb.EditMessageText(c, msg, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons(""), ParseMode: "HTML", DisableWebPagePreview: true})
 		return err
 
 	case strings.Contains(data, "play_pause"):
 		if _, err = vc.Calls.Pause(chatID); err != nil {
-			_ = cb.Answer(c, 0, false, "Unable to pause playback.", "")
-			_, _ = cb.EditMessageText(c, "Unable to pause playback.", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons(""), ParseMode: "HTML", DisableWebPagePreview: true})
+			_ = cb.Answer(c, 0, false, "⚠️ ᴍᴀʜɴıɴı ᴘᴀᴜᴢᴀ ᴇᴛᴍəᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.", "")
+			_, _ = cb.EditMessageText(c, "⚠️ <b>ᴍᴀʜɴıɴı ᴘᴀᴜᴢᴀ ᴇᴛᴍəᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.</b>", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons(""), ParseMode: "HTML", DisableWebPagePreview: true})
 			return nil
 		}
-		_ = cb.Answer(c, 0, false, "Playback paused.", "")
-		text := buildTrackMessage("Paused", "⏸") + fmt.Sprintf("\n\nPaused by %s", html.EscapeString(user.FirstName))
+		_ = cb.Answer(c, 0, false, "⏸ ᴍᴀʜɴı ᴘᴀᴜᴢᴀ ᴇᴅɪʟᴅɪ.", "")
+		text := buildTrackMessage("ᴘᴀᴜᴢᴀ ᴇᴅɪʟᴅɪ", "⏸") + fmt.Sprintf("\n\n👤 ᴘᴀᴜᴢᴀ ᴇᴅəɴ: %s", html.EscapeString(user.FirstName))
 		_, _ = cb.EditMessageText(c, text, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("pause"), ParseMode: "HTML", DisableWebPagePreview: true})
 		return nil
 
 	case strings.Contains(data, "play_resume"):
 		if _, err := vc.Calls.Resume(chatID); err != nil {
-			_ = cb.Answer(c, 0, false, "Unable to resume playback.", "")
-			_, _ = cb.EditMessageText(c, "Unable to resume playback.", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("pause"), ParseMode: "HTML", DisableWebPagePreview: true})
+			_ = cb.Answer(c, 0, false, "⚠️ ᴍᴀʜɴıɴı ᴅᴀᴠᴀᴍ ᴇᴛᴅɪʀᴍəᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.", "")
+			_, _ = cb.EditMessageText(c, "⚠️ <b>ᴍᴀʜɴıɴı ᴅᴀᴠᴀᴍ ᴇᴛᴅɪʀᴍəᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.</b>", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("pause"), ParseMode: "HTML", DisableWebPagePreview: true})
 			return nil
 		}
-		_ = cb.Answer(c, 0, false, "Playback resumed.", "")
-		text := buildTrackMessage("Now Playing", "▶") + fmt.Sprintf("\n\nResumed by %s", html.EscapeString(user.FirstName))
+		_ = cb.Answer(c, 0, false, "▶ ᴍᴀʜɴı ᴅᴀᴠᴀᴍ ᴇᴛᴅɪʀɪʟᴅɪ.", "")
+		text := buildTrackMessage("ʜᴀʟ-ʜᴀᴢıʀᴅᴀ ᴏxᴜɴᴜʀ", "▶") + fmt.Sprintf("\n\n👤 ᴅᴀᴠᴀᴍ ᴇᴛᴅɪʀəɴ: %s", html.EscapeString(user.FirstName))
 		_, _ = cb.EditMessageText(c, text, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("resume"), ParseMode: "HTML", DisableWebPagePreview: true})
 		return nil
 
 	case strings.Contains(data, "play_mute"):
 		if _, err := vc.Calls.Mute(chatID); err != nil {
-			_ = cb.Answer(c, 0, false, "Unable to mute playback.", "")
-			_, _ = cb.EditMessageText(c, "Unable to mute playback.", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("mute"), ParseMode: "HTML", DisableWebPagePreview: true})
+			_ = cb.Answer(c, 0, false, "⚠️ Səѕɪ ѕəѕѕɪᴢə ᴀʟᴍᴀᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.", "")
+			_, _ = cb.EditMessageText(c, "⚠️ <b>Səѕɪ ѕəѕѕɪᴢə ᴀʟᴍᴀᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.</b>", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("mute"), ParseMode: "HTML", DisableWebPagePreview: true})
 			return nil
 		}
-		_ = cb.Answer(c, 0, false, "Playback muted.", "")
-		text := buildTrackMessage("Muted", "🔇") + fmt.Sprintf("\n\nMuted by %s", html.EscapeString(user.FirstName))
+		_ = cb.Answer(c, 0, false, "🔇 Səѕ ѕəѕѕɪᴢə ᴀʟıɴᴅı.", "")
+		text := buildTrackMessage("Səѕѕɪᴢᴅə", "🔇") + fmt.Sprintf("\n\n👤 Səѕѕɪᴢə ᴀʟᴀɴ: %s", html.EscapeString(user.FirstName))
 		_, _ = cb.EditMessageText(c, text, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("mute"), ParseMode: "HTML", DisableWebPagePreview: true})
 		return nil
 
 	case strings.Contains(data, "play_unmute"):
 		if _, err := vc.Calls.Unmute(chatID); err != nil {
-			_ = cb.Answer(c, 0, false, "Unable to unmute playback.", "")
-			_, _ = cb.EditMessageText(c, "Unable to unmute playback.", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("unmute"), ParseMode: "HTML"})
+			_ = cb.Answer(c, 0, false, "⚠️ Səѕɪ ᴀçᴍᴀᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.", "")
+			_, _ = cb.EditMessageText(c, "⚠️ <b>Səѕɪ ᴀçᴍᴀᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.</b>", &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("unmute"), ParseMode: "HTML"})
 			return nil
 		}
-		_ = cb.Answer(c, 0, false, "Playback unmuted.", "")
-		text := buildTrackMessage("Now Playing", "▶") + fmt.Sprintf("\n\nUnmuted by %s", html.EscapeString(user.FirstName))
+		_ = cb.Answer(c, 0, false, "🔊 Səѕ ᴀçıʟᴅı.", "")
+		text := buildTrackMessage("ʜᴀʟ-ʜᴀᴢıʀᴅᴀ ᴏxᴜɴᴜʀ", "▶") + fmt.Sprintf("\n\n👤 Səѕɪ ᴀçᴀɴ: %s", html.EscapeString(user.FirstName))
 		_, _ = cb.EditMessageText(c, text, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("unmute"), DisableWebPagePreview: true})
 		return nil
 
 	case strings.Contains(data, "play_add_to_list"):
 		playlists, err := db.Instance.GetUserPlaylists(cb.SenderUserId)
 		if err != nil {
-			_ = cb.Answer(c, 0, false, "Unable to fetch playlists.", "")
+			_ = cb.Answer(c, 0, false, "⚠️ ᴘʟᴇʏʟɪѕᴛʟəʀɪ əʟᴅə ᴇᴛᴍəᴋ ᴍüᴍᴋüɴ ᴏʟᴍᴀᴅı.", "")
 			return nil
 		}
 
 		var playlistID string
 		if len(playlists) == 0 {
-			playlistID, err = db.Instance.CreatePlaylist("My Playlist (TgMusic)", cb.SenderUserId)
+			playlistID, err = db.Instance.CreatePlaylist("ᴍᴇɴɪᴍ ᴘʟᴇʏʟɪѕᴛɪᴍ (ᴛɢᴍᴜѕɪᴄ)", cb.SenderUserId)
 			if err != nil {
-				_ = cb.Answer(c, 0, false, "Unable to create playlist.", "")
+				_ = cb.Answer(c, 0, false, "⚠️ ᴘʟᴇʏʟɪѕᴛ ʏᴀʀᴀᴅıʟᴍᴀᴅı.", "")
 				return nil
 			}
 		} else {
@@ -161,21 +161,21 @@ func playCallbackHandler(c *td.Client, ctx *td.Context) error {
 
 		err = db.Instance.AddSongToPlaylist(playlistID, song)
 		if err != nil {
-			_ = cb.Answer(c, 0, false, "Unable to add track to playlist.", "")
+			_ = cb.Answer(c, 0, false, "⚠️ ᴍᴀʜɴı ᴘʟᴇʏʟɪѕᴛə əʟᴀᴠə ᴏʟᴜɴᴍᴀᴅı.", "")
 			return nil
 		}
 
 		playlist, err := db.Instance.GetPlaylist(playlistID)
 		if err != nil {
-			_ = cb.Answer(c, 0, false, "Playlist not found.", "")
+			_ = cb.Answer(c, 0, false, "⚠️ ᴘʟᴇʏʟɪѕᴛ ᴛᴀᴘıʟᴍᴀᴅı.", "")
 			return nil
 		}
 
-		_ = cb.Answer(c, 0, false, fmt.Sprintf("Track \"%s\" added to playlist \"%s\".", song.Name, playlist.Name), "")
+		_ = cb.Answer(c, 0, false, fmt.Sprintf("✅ \"%s\" ᴍᴀʜɴıѕı \"%s\" ᴘʟᴇʏʟɪѕᴛɪɴə əʟᴀᴠə ᴇᴅɪʟᴅɪ.", song.Name, playlist.Name), "")
 		return nil
 	}
 
-	text := buildTrackMessage("Now Playing", "▶")
+	text := buildTrackMessage("ʜᴀʟ-ʜᴀᴢıʀᴅᴀ ᴏxᴜɴᴜʀ", "▶")
 	_, _ = cb.EditMessageText(c, text, &td.EditTextMessageOpts{ReplyMarkup: core.ControlButtons("resume"), ParseMode: "HTML", DisableWebPagePreview: true})
 	return nil
 }
@@ -185,7 +185,7 @@ func vcPlayHandler(c *td.Client, ctx *td.Context) error {
 	data := cb.DataString()
 
 	if strings.Contains(data, "vcplay_close") {
-		_ = cb.Answer(c, 0, false, "Closing panel.", "")
+		_ = cb.Answer(c, 0, false, "🚪 ᴘᴀɴᴇʟ ǫᴀᴘᴀᴅıʟıʀ...", "")
 		_ = c.DeleteMessages(cb.ChatId, []int64{cb.MessageId}, &td.DeleteMessagesOpts{Revoke: true})
 		return nil
 	}
