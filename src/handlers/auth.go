@@ -30,13 +30,13 @@ func authListHandler(c *td.Client, ctx *td.Context) error {
 
 	authUser := db.Instance.GetAuthUsers(chatID)
 	if authUser == nil || len(authUser) == 0 {
-		_, _ = m.ReplyText(c, "No authorized users found.", nil)
+		_, _ = m.ReplyText(c, "❌ <i>Səlahiyyətli istifadəçi tapılmadı!</i>", nil)
 		return nil
 	}
 
-	text := "<b>Authorized Users</b>\n\n"
+	text := "🛡 <b><u>SƏLAHİYYƏTLİ İSTİFADƏÇİLƏR</u></b>\n\n"
 	for _, uid := range authUser {
-		text += fmt.Sprintf("• <a href=\"tg://user?id=%d\">%d</a>\n", uid, uid)
+		text += fmt.Sprintf("👤 • <a href=\"tg://user?id=%d\">%d</a>\n", uid, uid)
 	}
 
 	_, _ = m.ReplyText(c, text, replyOpts)
@@ -58,14 +58,14 @@ func addAuthHandler(c *td.Client, ctx *td.Context) error {
 	UserStatus, err := cache.GetUserAdmin(c, chatID, m.SenderID(), false)
 	if err != nil {
 		c.Logger.Warn("GetUserAdmin error", "error", err)
-		_, _ = m.ReplyText(c, "Unable to verify administrator status.", nil)
+		_, _ = m.ReplyText(c, "⚠️ <i>Adminlik statusu yoxlanıla bilmədi!</i>", nil)
 		return td.EndGroups
 	}
 
 	switch UserStatus.Status.(type) {
 	case *td.ChatMemberStatusCreator, *td.ChatMemberStatusAdministrator:
 	default:
-		_, _ = m.ReplyText(c, "You must be an administrator to use this command.", nil)
+		_, _ = m.ReplyText(c, "🚫 <b>Xəta:</b> Bu əmrdən istifadə etmək üçün <u>Administrator</u> olmalısınız!", nil)
 		return td.EndGroups
 	}
 
@@ -76,17 +76,17 @@ func addAuthHandler(c *td.Client, ctx *td.Context) error {
 	}
 
 	if db.Instance.IsAuthUser(chatID, userID) {
-		_, _ = m.ReplyText(c, "This user is already authorized.", nil)
+		_, _ = m.ReplyText(c, "ℹ️ Bu istifadəçiyə <b>artıq</b> səlahiyyət verilib.", nil)
 		return nil
 	}
 
 	if err = db.Instance.AddAuthUser(chatID, userID); err != nil {
 		c.Logger.Error("Failed to add authorized user", "error", err)
-		_, _ = m.ReplyText(c, "Failed to authorize the user.", nil)
+		_, _ = m.ReplyText(c, "💥 <b>Uğursuz cəhd:</b> İstifadəçiyə səlahiyyət verilərkən xəta yarandı.", nil)
 		return nil
 	}
 
-	_, err = m.ReplyText(c, fmt.Sprintf("User %d has been authorized.", userID), nil)
+	_, err = m.ReplyText(c, fmt.Sprintf("✅ <b>Uğurlu:</b> <code>%d</code> ID-li istifadəçiyə səlahiyyət verildi! ✨", userID), nil)
 	return err
 }
 
@@ -105,14 +105,14 @@ func removeAuthHandler(c *td.Client, ctx *td.Context) error {
 	UserStatus, err := cache.GetUserAdmin(c, chatID, m.SenderID(), false)
 	if err != nil {
 		c.Logger.Warn("GetUserAdmin error", "error", err)
-		_, _ = m.ReplyText(c, "Unable to verify administrator status.", nil)
+		_, _ = m.ReplyText(c, "⚠️ <i>Adminlik statusu yoxlanıla bilmədi!</i>", nil)
 		return td.EndGroups
 	}
 
 	switch UserStatus.Status.(type) {
 	case *td.ChatMemberStatusCreator, *td.ChatMemberStatusAdministrator:
 	default:
-		_, _ = m.ReplyText(c, "You must be an administrator to use this command.", nil)
+		_, _ = m.ReplyText(c, "🚫 <b>Xəta:</b> Bu əmrdən istifadə etmək üçün <u>Administrator</u> olmalısınız!", nil)
 		return td.EndGroups
 	}
 
@@ -123,16 +123,16 @@ func removeAuthHandler(c *td.Client, ctx *td.Context) error {
 	}
 
 	if !db.Instance.IsAuthUser(chatID, userID) {
-		_, _ = m.ReplyText(c, "This user is not authorized.", nil)
+		_, _ = m.ReplyText(c, "ℹ️ Bu istifadəçi onsuz da səlahiyyətli siyahısında <b>deyil</b>.", nil)
 		return nil
 	}
 
 	if err := db.Instance.RemoveAuthUser(chatID, userID); err != nil {
 		c.Logger.Error("Failed to remove authorized user", "error", err)
-		_, _ = m.ReplyText(c, "Failed to remove authorized user.", nil)
+		_, _ = m.ReplyText(c, "💥 <b>Uğursuz cəhd:</b> Səlahiyyət ləğv edilərkən xəta yarandı.", nil)
 		return nil
 	}
 
-	_, err = m.ReplyText(c, fmt.Sprintf("User %d has been removed from the authorized list.", userID), nil)
+	_, err = m.ReplyText(c, fmt.Sprintf("🗑 <b>Məlumat:</b> <code>%d</code> ID-li istifadəçinin səlahiyyəti ləğv edildi! ❌", userID), nil)
 	return err
 }
