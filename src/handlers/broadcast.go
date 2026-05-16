@@ -55,12 +55,12 @@ func cancelBroadcastHandler(c *td.Client, ctx *td.Context) error {
 	}
 	m := ctx.EffectiveMessage
 	if !broadcastInProgress.Load() {
-		_, _ = m.ReplyText(c, "No broadcast in progress.", nil)
+		_, _ = m.ReplyText(c, "❌ __Hal-hazırda aktiv heç bir yayım yoxdur...__", nil)
 		return td.EndGroups
 	}
 
 	broadcastCancelFlag.Store(true)
-	_, _ = m.ReplyText(c, "Broadcast stopped.", nil)
+	_, _ = m.ReplyText(c, "🛑 **Yayım uğurla dayandırıldı!**", nil)
 	return td.EndGroups
 }
 
@@ -71,21 +71,21 @@ func broadcastHandler(c *td.Client, ctx *td.Context) error {
 
 	m := ctx.EffectiveMessage
 	if broadcastInProgress.Load() {
-		_, _ = m.ReplyText(c, "A broadcast is already in progress.", nil)
+		_, _ = m.ReplyText(c, "⚠️ `Bir yayım artıq davam etməkdədir.` zəhmət olmasa gözləyin...", nil)
 		return td.EndGroups
 	}
 
 	reply, err := m.GetRepliedMessage(c)
 	if err != nil {
-		usage := `Please reply to a message to broadcast.
+		usage := `📣 𝘠𝘢𝘺ı𝘮 𝘦𝘵𝘮ə𝘬 üçü𝘯 𝘻ə𝘩𝘮ə𝒕 𝘰𝘭𝘮𝘢𝘴𝘢 𝘣𝘪𝘳 𝘮𝘦𝘴𝘢𝘫𝘢 𝘤𝘢𝘷𝘢𝘣 (𝘳𝘦𝘱𝘭𝘺) 𝘺𝘢𝘻ı𝘯.
 
-Usage:
--chat  : groups only
--user  : users only
--both  : groups + users (default)
--copy  : send as copy
+🛠 **İstifadə Qaydası:**
+-chat  : 𝘲𝘳𝘶𝘱𝘭𝘢𝘳 🧑‍🤝‍🧑
+-user  : 𝘪𝘴𝘵𝘪𝘧𝘢𝘥əç𝘪𝘭ə𝘳 👤
+-both  : 𝘲𝘳𝘶𝘱𝘭𝘢𝘳 + 𝘪𝘴𝘵𝘪𝘧𝘢𝘥əç𝘪𝘭ə𝘳 (𝘴essiya) 👥
+-copy  : 𝘬öçürmə 𝘮𝘰𝘥𝘶 (𝘤𝘰𝘱𝘺) 📋
 
-Examples:
+📝 __Nümunələr:__
 /broadcast
 /broadcast -chat
 /broadcast -user -copy
@@ -134,14 +134,14 @@ Examples:
 	}
 
 	if len(targets) == 0 {
-		_, _ = m.ReplyText(c, "No targets found.", nil)
+		_, _ = m.ReplyText(c, "🔍 **Heç bir hədəf tapılmadı.**", nil)
 		return td.EndGroups
 	}
 
 	broadcastCancelFlag.Store(false)
 	broadcastInProgress.Store(true)
 
-	sentMsg, _ := m.ReplyText(c, "Broadcast started.", nil)
+	sentMsg, _ := m.ReplyText(c, "🚀 **Yayım başladıldı...** __Xahiş olunur gözləyin.__", nil)
 
 	go func() {
 		defer broadcastInProgress.Store(false)
@@ -153,7 +153,7 @@ Examples:
 			if broadcastCancelFlag.Load() {
 				_, _ = sentMsg.EditText(
 					c,
-					fmt.Sprintf("Broadcast stopped.\nGroups: %d\nUsers: %d", count, ucount),
+					fmt.Sprintf("🛑 **𝘠𝘢𝘺ı𝘮 𝘥𝘢𝘺𝘢𝘯𝘥ı𝘳ı𝘭𝘥ı.**\n\n👥 𝘘𝘳𝘶𝘱𝘭𝘢𝘳: %d\n👤 𝘐𝘴𝘵𝘪𝘧𝘢𝘥əç𝘪𝘭ə𝘳: %d", count, ucount),
 					nil,
 				)
 				return
@@ -185,7 +185,7 @@ Examples:
 			}
 		}
 
-		text := fmt.Sprintf("Broadcast ended.\nGroups: %d\nUsers: %d", count, ucount)
+		text := fmt.Sprintf("✅ **Yayım başa çatdı!**\n\n👥 `Qruplar:` %d\n👤 `İstifadəçilər:` %d", count, ucount)
 		failedStr := failedBuilder.String()
 
 		if failedStr != "" {
